@@ -1,0 +1,120 @@
+---
+import Icon from './Icon.astro';
+import { profile, features } from '../data/cv';
+
+const year = new Date().getFullYear();
+
+const socials = [
+  { name: 'github', label: 'GitHub', href: profile.links.github },
+  { name: 'linkedin', label: 'LinkedIn', href: profile.links.linkedin },
+  { name: 'mail', label: 'Email', href: profile.email ? `mailto:${profile.email}` : '' },
+] as const;
+
+const links = [
+  { label: 'Projects', href: '/#projects' },
+  { label: 'About', href: '/#about' },
+  ...(features.photography ? [{ label: 'Photography', href: '/photography' }] : []),
+  { label: 'Contact', href: '/#contact' },
+];
+---
+
+<footer class="site-footer container">
+  <div class="footer-links">
+    <ul>
+      {
+        links.map((l) => (
+          <li>
+            <a href={l.href}>{l.label}</a>
+          </li>
+        ))
+      }
+    </ul>
+    <p class="copy">© {year} {profile.name}</p>
+  </div>
+
+  <ul class="socials">
+    {
+      socials
+        .filter((s) => s.href)
+        .map((s) => (
+          <li>
+            <a href={s.href} aria-label={s.label} target={s.name === 'mail' ? undefined : '_blank'} rel="noopener noreferrer">
+              <Icon name={s.name} size={s.name === 'mail' ? 34 : 32} />
+            </a>
+          </li>
+        ))
+    }
+  </ul>
+</footer>
+
+<style>
+  .site-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 32px;
+    padding-top: clamp(80px, 10vw, 180px);
+    padding-bottom: clamp(32px, 3vw, 56px);
+    position: relative;
+    z-index: 1;
+  }
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .footer-links ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px clamp(24px, 3vw, 56px);
+  }
+
+  .footer-links a {
+    font-size: 20px;
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .footer-links a:hover {
+    color: var(--text);
+  }
+
+  .copy {
+    margin-top: 20px;
+    font-size: 14px;
+    color: var(--text-dim);
+  }
+
+  .socials {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .socials a {
+    display: inline-flex;
+    color: var(--text);
+    transition: color 0.2s, transform 0.2s;
+  }
+
+  .socials a:hover {
+    color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 640px) {
+    .site-footer {
+      flex-direction: column-reverse;
+      align-items: flex-start;
+    }
+
+    .socials {
+      flex-direction: row;
+      gap: 24px;
+    }
+  }
+</style>

@@ -1,0 +1,549 @@
+---
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import { profile, summary, experience, education, coursework, awards, skills, languages, interests } from '../data/cv';
+import { profilePhoto } from '../data/profilePhoto';
+
+// One-page mode shows the first ONE_PAGE_PROJECTS projects (ONE_PAGE_HIGHLIGHTS bullets each),
+// the first ONE_PAGE_EXPERIENCE experience entries, and no education bullets or coursework.
+const ONE_PAGE_PROJECTS = 3;
+const ONE_PAGE_HIGHLIGHTS = 2;
+const ONE_PAGE_EXPERIENCE = 1;
+
+// The printable CV pulls from the same data as the rest of the site.
+const projects = (await getCollection('projects', ({ data }) => !data.draft && data.featured)).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+
+const site = Astro.site ? Astro.site.host : '';
+const linkLabel = (url: string) => url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '');
+---
+
+<Base title="CV" description={`CV of ${profile.fullName}, ${profile.headline}.`} current="cv">
+  <div class="container cv-page">
+    <div class="toolbar">
+      <a class="back" href="/"><Icon name="arrow-left" size={18} /> Back to site</a>
+      <div class="toolbar-actions">
+        <div class="mode" role="group" aria-label="CV length">
+          <button type="button" data-mode="full" aria-pressed="true">Full</button>
+          <button type="button" data-mode="compact" aria-pressed="false">One page</button>
+        </div>
+        <button type="button" class="print" onclick="window.print()">Download PDF</button>
+      </div>
+    </div>
+
+    <article class="paper">
+      <header class="cv-header">
+        {profilePhoto && <Image class="cv-photo" src={profilePhoto} alt="" width={180} height={180} />}
+        <div class="cv-name">
+          <h1>{profile.fullName}</h1>
+          <p class="headline">{profile.headline}</p>
+        </div>
+        <ul class="contact">
+          <li><a href={`mailto:${profile.email}`}>{profile.email}</a></li>
+          <li>{profile.location}</li>
+          {profile.links.github && <li><a href={profile.links.github}>{linkLabel(profile.links.github)}</a></li>}
+          {profile.links.linkedin && <li><a href={profile.links.linkedin}>{linkLabel(profile.links.linkedin)}</a></li>}
+          {site && <li><a href={Astro.site}>{site}</a></li>}
+        </ul>
+      </header>
+
+      <section class="cv-summary">
+        <p>{summary}</p>
+      </section>
+
+      <div class="cv-body">
+        <div class="cv-main">
+          <section>
+            <h2>Education</h2>
+            {
+              education.map((e) => (
+                <div class="entry">
+                  <div class="entry-head">
+                    <h3>{e.title}</h3>
+                    <span class="period">{e.period}</span>
+                  </div>
+                  <p class="org">{e.org}</p>
+                  {e.details.length > 0 && (
+                    <ul class="extra">
+                      {e.details.map((d) => (
+                        <li>{d}</li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              ))
+            }
+          </section>
+
+          {
+            awards.length > 0 && (
+              <section>
+                <h2>Awards</h2>
+                {awards.map((a) => (
+                  <div class="entry">
+                    <div class="entry-head">
+                      <h3>
+                        {a.title} · {a.event}
+                      </h3>
+                      <span class="period">{a.date}</span>
+                    </div>
+                    <p class="award-line extra">{a.detail}</p>
+                    <p class="award-line one-page-only">{a.short}</p>
+                  </div>
+                ))}
+              </section>
+            )
+          }
+
+          <section>
+            <h2>Projects</h2>
+            {
+              projects.map((p, i) => (
+                <div class:list={['entry', { extra: i >= ONE_PAGE_PROJECTS }]}>
+                  <div class="entry-head">
+                    <h3>{p.data.title}</h3>
+                    {p.data.year && <span class="period">{p.data.year}</span>}
+                  </div>
+                  {p.data.context && <p class="org">{p.data.context}</p>}
+                  <ul>
+                    {(p.data.highlights.length > 0 ? p.data.highlights.slice(0, 3) : [p.data.summary]).map((h, j) => (
+                      <li class:list={{ extra: j >= ONE_PAGE_HIGHLIGHTS }}>{h}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))
+            }
+          </section>
+
+          <section>
+            <h2>Experience</h2>
+            {
+              experience.map((e, i) => (
+                <div class:list={['entry', { extra: i >= ONE_PAGE_EXPERIENCE }]}>
+                  <div class="entry-head">
+                    <h3>{e.title}</h3>
+                    <span class="period">{e.period}</span>
+                  </div>
+                  <p class="org">{e.org}</p>
+                  {e.details.length > 0 && (
+                    <ul>
+                      {e.details.map((d) => (
+                        <li>{d}</li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              ))
+            }
+          </section>
+        </div>
+
+        <aside class="cv-side">
+          <section>
+            <h2>Skills</h2>
+            {
+              skills.map((s) => (
+                <div class="skill">
+                  <h3>{s.group}</h3>
+                  <p>{s.items.join(', ')}</p>
+                </div>
+              ))
+            }
+          </section>
+
+          <section class="extra">
+            <h2>Coursework</h2>
+            <ul class="plain">
+              {coursework.map((c) => <li>{c}</li>)}
+            </ul>
+          </section>
+
+          <section>
+            <h2>Languages</h2>
+            <ul class="plain">
+              {
+                languages.map((l) => (
+                  <li>
+                    {l.name} <span class="muted-print">· {l.level}</span>
+                  </li>
+                ))
+              }
+            </ul>
+          </section>
+
+          <section>
+            <h2>Interests</h2>
+            <p>{interests.join(', ')}</p>
+          </section>
+        </aside>
+      </div>
+    </article>
+  </div>
+</Base>
+
+<style>
+  .cv-page {
+    --ink: #1c1c1c;
+    --ink-muted: #555;
+    --ink-dim: #777;
+    --paper: #ffffff;
+    --rule: #e3e3e3;
+    /* A darker green than the site accent so it stays readable on white and in print. */
+    --paper-accent: #0f8f43;
+
+    padding-top: clamp(40px, 5vw, 80px);
+  }
+
+  .toolbar {
+    max-width: 210mm;
+    margin: 0 auto 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 16px;
+  }
+
+  .back:hover {
+    color: var(--accent);
+  }
+
+  .toolbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .mode {
+    display: inline-flex;
+    padding: 3px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+  }
+
+  .mode button {
+    font: inherit;
+    font-size: 14px;
+    color: var(--text-muted);
+    background: none;
+    border: 0;
+    padding: 7px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+
+  .mode button[aria-pressed='true'] {
+    background: var(--surface);
+    color: var(--text);
+  }
+
+  .print {
+    font: inherit;
+    font-size: 16px;
+    font-weight: 500;
+    color: #0d0d0d;
+    background: var(--accent);
+    border: 0;
+    padding: 10px 20px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .print:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(46, 238, 102, 0.25);
+  }
+
+  .paper {
+    max-width: 210mm;
+    margin: 0 auto;
+    background: var(--paper);
+    color: var(--ink);
+    padding: clamp(24px, 5vw, 18mm);
+    font-size: 10pt;
+    line-height: 1.45;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+  }
+
+  .paper a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .cv-header {
+    display: flex;
+    align-items: flex-end;
+    gap: 20px;
+    padding-bottom: 14px;
+    border-bottom: 2px solid var(--paper-accent);
+  }
+
+  .cv-name {
+    flex: 1;
+  }
+
+  .cv-header :global(.cv-photo) {
+    width: 24mm;
+    height: 24mm;
+    object-fit: cover;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* Leave room for the photo so the name stays on one line. */
+  .cv-header:has(:global(.cv-photo)) h1 {
+    font-size: 19pt;
+  }
+
+  .cv-header:has(:global(.cv-photo)) .headline {
+    font-size: 9.5pt;
+  }
+
+  @media (min-width: 721px), print {
+    .cv-header:has(:global(.cv-photo)) :is(h1, .headline) {
+      white-space: nowrap;
+    }
+  }
+
+  h1 {
+    font-size: 24pt;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+  }
+
+  .headline {
+    margin-top: 4px;
+    font-size: 11pt;
+    color: var(--paper-accent);
+    font-weight: 500;
+  }
+
+  .contact {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    text-align: right;
+    font-size: 9pt;
+    color: var(--ink-muted);
+  }
+
+  .cv-summary {
+    margin-top: 14px;
+    color: var(--ink-muted);
+  }
+
+  .cv-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 58mm;
+    gap: 9mm;
+    margin-top: 6px;
+  }
+
+  h2 {
+    font-size: 9pt;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--paper-accent);
+    margin: 18px 0 8px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .entry {
+    break-inside: avoid;
+  }
+
+  .entry + .entry {
+    margin-top: 10px;
+  }
+
+  .entry-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+  }
+
+  h3 {
+    font-size: 10.5pt;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  .period {
+    flex-shrink: 0;
+    font-size: 9pt;
+    color: var(--ink-dim);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .org {
+    color: var(--ink-muted);
+    font-style: italic;
+    font-size: 9.5pt;
+  }
+
+  .entry ul {
+    margin: 4px 0 0;
+    padding-left: 1.1em;
+  }
+
+  .entry li + li {
+    margin-top: 2px;
+  }
+
+  .entry li::marker {
+    color: var(--paper-accent);
+  }
+
+  .award-line {
+    margin-top: 2px;
+  }
+
+  .stack {
+    margin-top: 3px;
+    font-size: 8.5pt;
+    color: var(--ink-dim);
+  }
+
+  .cv-side .skill + .skill {
+    margin-top: 7px;
+  }
+
+  .cv-side h3 {
+    font-size: 9pt;
+  }
+
+  .cv-side p,
+  .cv-side li {
+    font-size: 9pt;
+    color: var(--ink-muted);
+  }
+
+  .plain {
+    margin: 0;
+    padding-left: 1em;
+  }
+
+  .plain li + li {
+    margin-top: 4px;
+  }
+
+  .muted-print {
+    color: var(--ink-dim);
+  }
+
+  /* One-page mode: fewer projects and bullets, tighter spacing. */
+  .paper.compact .extra,
+  .paper:not(.compact) .one-page-only {
+    display: none;
+  }
+
+  .paper.compact {
+    font-size: 9.5pt;
+  }
+
+  .paper.compact h2 {
+    margin: 13px 0 6px;
+  }
+
+  .paper.compact .entry + .entry {
+    margin-top: 7px;
+  }
+
+  .paper.compact .cv-summary {
+    margin-top: 10px;
+  }
+
+  @media (max-width: 720px) {
+    .cv-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .contact {
+      text-align: left;
+    }
+
+    .toolbar {
+      flex-wrap: wrap;
+    }
+
+    .cv-body {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+  }
+
+  @page {
+    size: A4;
+    margin: 12mm 13mm;
+  }
+
+  @media print {
+    :global(body) {
+      background: #fff !important;
+      min-height: 0;
+    }
+
+    :global(.site-header),
+    :global(.site-footer),
+    :global(.glows),
+    .toolbar {
+      display: none !important;
+    }
+
+    .cv-page {
+      padding: 0;
+      max-width: none;
+    }
+
+    .paper {
+      max-width: none;
+      padding: 0;
+      box-shadow: none;
+    }
+
+    .cv-body {
+      grid-template-columns: minmax(0, 1fr) 56mm;
+    }
+
+    h2 {
+      break-after: avoid;
+    }
+  }
+</style>
+
+<script>
+  const paper = document.querySelector<HTMLElement>('.paper');
+  const buttons = document.querySelectorAll<HTMLButtonElement>('.mode button');
+
+  const setMode = (mode: string) => {
+    paper?.classList.toggle('compact', mode === 'compact');
+    buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.mode === mode)));
+    const url = new URL(location.href);
+    if (mode === 'compact') url.searchParams.set('mode', 'one-page');
+    else url.searchParams.delete('mode');
+    history.replaceState(null, '', url);
+  };
+
+  buttons.forEach((b) => b.addEventListener('click', () => setMode(b.dataset.mode!)));
+  // /cv?mode=one-page opens straight in one-page mode, so the link can be shared.
+  if (new URLSearchParams(location.search).get('mode') === 'one-page') setMode('compact');
+</script>

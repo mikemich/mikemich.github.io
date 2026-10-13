@@ -1,0 +1,94 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+
+type Props = { project: CollectionEntry<'projects'> };
+
+const { project } = Astro.props;
+const { title, summary, cover, tags, year, context } = project.data;
+const meta = [context, year].filter(Boolean).join(' · ');
+---
+
+<a class="card" href={`/projects/${project.id}`}>
+  <div class="media">
+    {
+      cover ? (
+        <Image src={cover} alt="" widths={[520, 800, 1040]} sizes="(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 508px" />
+      ) : (
+        <div class="placeholder" aria-hidden="true">
+          <span>{tags.slice(0, 3).join(' · ')}</span>
+        </div>
+      )
+    }
+  </div>
+  {meta && <p class="meta">{meta}</p>}
+  <h3>{title}</h3>
+  <p class="summary">{summary}</p>
+</a>
+
+<style>
+  .card {
+    display: block;
+    text-decoration: none;
+  }
+
+  .media {
+    position: relative;
+    aspect-ratio: 508 / 347;
+    background: var(--surface);
+    transition:
+      transform 0.3s ease,
+      box-shadow 0.3s ease;
+  }
+
+  /* The green offset block from the Figma hover state. */
+  .card:hover .media,
+  .card:focus-visible .media {
+    transform: translate(-4px, -4px);
+    box-shadow: 16px 16px 0 var(--accent);
+  }
+
+  .media :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .placeholder {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: flex-end;
+    padding: 20px 24px;
+    background:
+      linear-gradient(transparent 49.5%, rgba(255, 255, 255, 0.035) 50%, transparent 50.5%) 0 0 / 100% 48px,
+      linear-gradient(90deg, transparent 49.5%, rgba(255, 255, 255, 0.035) 50%, transparent 50.5%) 0 0 / 48px 100%;
+  }
+
+  .placeholder span {
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  .meta {
+    margin-top: clamp(20px, 1.8vw, 28px);
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  h3 {
+    font-size: clamp(24px, 1.9vw, 34px);
+    margin-top: 8px;
+  }
+
+  .summary {
+    margin-top: 8px;
+    color: var(--text-muted);
+    font-size: 17px;
+    max-width: 44ch;
+  }
+</style>

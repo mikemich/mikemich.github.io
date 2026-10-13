@@ -1,0 +1,200 @@
+---
+import logo from '../assets/logo.svg?raw';
+import Icon from './Icon.astro';
+import { features } from '../data/cv';
+
+type Props = { current?: 'projects' | 'photography' | 'cv' };
+const { current } = Astro.props;
+
+const nav = [
+  { id: 'projects', label: 'Projects', href: '/#projects' },
+  { id: 'about', label: 'About', href: '/#about' },
+  ...(features.photography ? [{ id: 'photography', label: 'Photo', href: '/photography' }] : []),
+  { id: 'skills', label: 'Skills', href: '/#skills' },
+  { id: 'contact', label: 'Contact', href: '/#contact' },
+  { id: 'cv', label: 'CV', href: '/cv' },
+];
+---
+
+<header class="site-header container">
+  <a href="/" class="logo" aria-label="Home">
+    <Fragment set:html={logo} />
+  </a>
+
+  <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
+    <span class="visually-hidden">Menu</span>
+    <span class="icon-open"><Icon name="menu" size={28} /></span>
+    <span class="icon-close"><Icon name="close" size={28} /></span>
+  </button>
+
+  <nav id="site-nav" class="site-nav" aria-label="Main">
+    <ul>
+      {
+        nav.map((item) => (
+          <li>
+            <a href={item.href} data-section={item.id} aria-current={current === item.id ? 'page' : undefined}>
+              {item.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+</header>
+
+<style>
+  .site-header {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: clamp(24px, 3.6vw, 62px);
+  }
+
+  .logo {
+    display: inline-flex;
+    width: 46px;
+    height: 28px;
+  }
+
+  .logo :global(svg) {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  .site-nav ul {
+    display: flex;
+    gap: clamp(32px, 4.6vw, 88px);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .site-nav a {
+    position: relative;
+    display: inline-block;
+    font-size: 20px;
+    line-height: 1.2;
+    text-decoration: none;
+    padding-block: 6px;
+  }
+
+  /* Green underline from the Figma nav (75px under "Projects"). */
+  .site-nav a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.25s ease;
+  }
+
+  .site-nav a:hover::after,
+  .site-nav a[aria-current]::after {
+    transform: scaleX(1);
+  }
+
+  .menu-toggle {
+    display: none;
+    background: none;
+    border: 0;
+    color: var(--text);
+    padding: 8px;
+    margin-right: -8px;
+    cursor: pointer;
+  }
+
+  .menu-toggle .icon-close {
+    display: none;
+  }
+
+  @media (max-width: 860px) {
+    .menu-toggle {
+      display: inline-flex;
+    }
+
+    .site-nav {
+      position: absolute;
+      top: 100%;
+      left: var(--gutter);
+      right: var(--gutter);
+      margin-top: 16px;
+      padding: 12px 20px;
+      background: var(--surface-2);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      display: none;
+    }
+
+    .site-header.open .site-nav {
+      display: block;
+    }
+
+    .site-header.open .icon-open {
+      display: none;
+    }
+
+    .site-header.open .icon-close {
+      display: inline;
+    }
+
+    .site-nav ul {
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .site-nav a {
+      display: block;
+      padding-block: 12px;
+    }
+
+    .site-nav a::after {
+      bottom: 6px;
+      right: auto;
+      width: 40px;
+    }
+  }
+</style>
+
+<script>
+  const header = document.querySelector<HTMLElement>('.site-header');
+  const toggle = header?.querySelector<HTMLButtonElement>('.menu-toggle');
+
+  toggle?.addEventListener('click', () => {
+    const open = header!.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', String(open));
+  });
+
+  header?.querySelectorAll('.site-nav a').forEach((link) =>
+    link.addEventListener('click', () => {
+      header.classList.remove('open');
+      toggle?.setAttribute('aria-expanded', 'false');
+    }),
+  );
+
+  // On the homepage, underline the nav item for the section in view.
+  const links = new Map(
+    [...document.querySelectorAll<HTMLAnchorElement>('.site-nav a[data-section]')].map((a) => [a.dataset.section, a]),
+  );
+  const sections = [...document.querySelectorAll<HTMLElement>('main section[id]')].filter((s) => links.has(s.id));
+
+  if (sections.length) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          links.forEach((a) => a.removeAttribute('aria-current'));
+          links.get(entry.target.id)?.setAttribute('aria-current', 'true');
+        }
+      },
+      { rootMargin: '-45% 0px -50% 0px' },
+    );
+    sections.forEach((s) => observer.observe(s));
+  }
+</script>

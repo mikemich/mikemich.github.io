@@ -1,0 +1,104 @@
+---
+import '@fontsource-variable/inter';
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { profile } from '../data/cv';
+
+type Props = {
+  title?: string;
+  description?: string;
+  current?: 'projects' | 'photography' | 'cv';
+};
+
+const {
+  title,
+  description = `${profile.name} – ${profile.role} based in ${profile.location}. Projects, CV and photography.`,
+  current,
+} = Astro.props;
+
+const pageTitle = title ? `${title} · ${profile.name}` : `${profile.name} · ${profile.role}`;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#212121" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <!-- Background glows from the Figma file (green top-right, blue bottom-left). -->
+    <div class="glows" aria-hidden="true">
+      <div class="glow glow-green"></div>
+      <div class="glow glow-blue"></div>
+    </div>
+
+    <Header current={current} />
+    <main>
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>
+
+<style>
+  .glows {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .glow {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.2;
+  }
+
+  .glow-green {
+    width: 1767px;
+    height: 1767px;
+    top: -750px;
+    right: -661px;
+    background: radial-gradient(closest-side, var(--glow-green), transparent);
+  }
+
+  .glow-blue {
+    width: 1926px;
+    height: 1926px;
+    bottom: -892px;
+    left: -1307px;
+    background: radial-gradient(closest-side, var(--glow-blue), transparent);
+  }
+
+  @media (max-width: 860px) {
+    .glow-green {
+      width: 900px;
+      height: 900px;
+      top: -420px;
+      right: -420px;
+    }
+
+    .glow-blue {
+      width: 1000px;
+      height: 1000px;
+      bottom: -500px;
+      left: -620px;
+    }
+  }
+
+  main {
+    position: relative;
+    z-index: 1;
+  }
+</style>

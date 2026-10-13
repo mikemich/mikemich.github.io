@@ -1,0 +1,624 @@
+---
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import Icon from '../components/Icon.astro';
+import { profile, about, goals, experience, education, coursework, awards, skills, languages, interests, features } from '../data/cv';
+import { photos } from '../data/photos';
+import { profilePhoto } from '../data/profilePhoto';
+
+const projects = (await getCollection('projects', ({ data }) => !data.draft)).sort((a, b) => a.data.order - b.data.order);
+const featured = projects.filter((p) => p.data.featured);
+const more = projects.filter((p) => !p.data.featured);
+
+const [roleFirst, ...roleRest] = profile.role.split(' ');
+const roleLast = roleRest.pop();
+const roleMiddle = [roleFirst, ...roleRest].join(' ');
+
+const timeline = [
+  { heading: 'Experience', items: experience },
+  { heading: 'Education', items: education },
+];
+---
+
+<Base>
+  <section class:list={['hero container', { 'has-photo': profilePhoto }]} aria-label="Introduction">
+    <div class="hero-text">
+    <h1>
+      <span class="thin">Hi, I am </span><span class="name">{profile.name}</span>
+      <span class="thin"> and I am an </span>{roleMiddle} <strong>{roleLast}</strong>
+      <span class="thin"> living in {profile.location}</span>
+    </h1>
+    <p class="hero-sub">
+      {profile.tagline}{' '}
+      <a class="link-accent" href="#contact">Get in touch</a> or <a class="link-accent" href="/cv">view my CV</a>.
+    </p>
+    </div>
+    {
+      profilePhoto && (
+        <div class="hero-photo">
+          <Image src={profilePhoto} alt={`Photo of ${profile.name}`} widths={[320, 480, 720]} sizes="(max-width: 860px) 200px, 360px" loading="eager" />
+        </div>
+      )
+    }
+  </section>
+
+  <section id="projects" class="section container">
+    <h2 class="section-title">Projects</h2>
+    <div class="project-grid">
+      {featured.map((project) => <ProjectCard project={project} />)}
+    </div>
+
+    {
+      more.length > 0 && (
+        <div class="more-projects">
+          <h3 class="timeline-heading">More projects</h3>
+          <ul>
+            {more.map((p) => (
+              <li>
+                <a href={`/projects/${p.id}`}>
+                  <span class="more-title">{p.data.title}</span>
+                  <span class="more-summary">{p.data.summary}</span>
+                  <span class="more-meta">{[p.data.year, p.data.tags.slice(0, 3).join(' · ')].filter(Boolean).join('  ·  ')}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )
+    }
+  </section>
+
+  <section id="about" class="section container">
+    <h2 class="section-title">About</h2>
+
+    <div class="about-grid">
+      <div class="bio">
+        {about.map((p) => <p>{p}</p>)}
+      </div>
+
+      <div class="goals">
+        <span class="eyebrow">Goals</span>
+        <ol>
+          {
+            goals.map((goal, i) => (
+              <li>
+                <span class="num">{String(i + 1).padStart(2, '0')}</span>
+                <span>{goal}</span>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </div>
+
+    {
+      awards.length > 0 && (
+        <div class="awards">
+          <h3 class="timeline-heading">Awards</h3>
+          <ul>
+            {awards.map((a) => (
+              <li>
+                <p class="period">{a.date}</p>
+                <h4>
+                  {a.title} <span class="award-event">· {a.event}</span>
+                </h4>
+                <p class="award-detail">{a.detail}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )
+    }
+
+    <div class="timeline-grid">
+      {
+        timeline.map(({ heading, items }) => (
+          <div>
+            <h3 class="timeline-heading">{heading}</h3>
+            <ol class="timeline">
+              {items.map((item) => (
+                <li>
+                  {item.period && <p class="period">{item.period}</p>}
+                  <h4>{item.title}</h4>
+                  <p class="org">{item.org}</p>
+                  {item.details.length > 0 && (
+                    <ul>
+                      {item.details.map((d) => (
+                        <li>{d}</li>
+                      ))}
+                    </ul>
+                  )}
+                </li>
+              ))}
+            </ol>
+          </div>
+        ))
+      }
+    </div>
+
+    <div class="coursework">
+      <h3 class="timeline-heading">Selected coursework</h3>
+      <ul>
+        {coursework.map((c) => <li>{c}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section id="skills" class="section container">
+    <h2 class="section-title">Skills</h2>
+    <div class="skills-grid">
+      {
+        skills.map((s) => (
+          <div class="skill-group">
+            <h3>{s.group}</h3>
+            <ul class="tags">
+              {s.items.map((item) => (
+                <li>{item}</li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+      <div class="skill-group">
+        <h3>Languages</h3>
+        <ul class="tags">
+          {languages.map((l) => <li>{l.name} ({l.level.toLowerCase()})</li>)}
+        </ul>
+      </div>
+      <div class="skill-group">
+        <h3>Interests</h3>
+        <ul class="tags">
+          {interests.map((i) => <li>{i}</li>)}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  {
+    features.photography && (
+      <section id="photography" class="section container">
+        <h2 class="section-title">Photography</h2>
+        {photos.length > 0 ? (
+          <div class="photo-strip">
+            {photos.slice(0, 4).map((photo) => (
+              <a href="/photography" class="photo-thumb">
+                <Image src={photo.src} alt={photo.caption} widths={[400, 700]} sizes="(max-width: 700px) 50vw, 25vw" />
+              </a>
+            ))}
+          </div>
+        ) : (
+          <p class="muted">A selection of my photos is on the way.</p>
+        )}
+        <a class="more-link" href="/photography">
+          See the gallery <Icon name="arrow" size={20} />
+        </a>
+      </section>
+    )
+  }
+
+  <section id="contact" class="section container contact">
+    <h2 class="section-title">Contact</h2>
+    <p class="contact-lead">Have a project, a role or a question in mind?</p>
+    <a class="contact-email" href={`mailto:${profile.email}`}>{profile.email}</a>
+    <p class="muted contact-loc">Based in {profile.location}</p>
+  </section>
+</Base>
+
+<style>
+  /* Hero: Inter Thin / Regular / Medium mix from the Figma headline. */
+  .hero {
+    padding-top: clamp(64px, 7.5vw, 140px);
+  }
+
+  .hero.has-photo {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: clamp(32px, 5vw, 96px);
+  }
+
+  .hero-photo {
+    width: clamp(220px, 22vw, 360px);
+    aspect-ratio: 4 / 5;
+    position: relative;
+  }
+
+  /* Same green offset block as the project cards. */
+  .hero-photo::before {
+    content: '';
+    position: absolute;
+    inset: 16px -16px -16px 16px;
+    background: var(--accent);
+  }
+
+  .hero-photo :global(img) {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  @media (max-width: 860px) {
+    .hero.has-photo {
+      grid-template-columns: 1fr;
+    }
+
+    .hero-photo {
+      order: -1;
+      width: 180px;
+    }
+  }
+
+  .hero h1 {
+    max-width: 1125px;
+    font-size: clamp(32px, 1.4rem + 2.2vw, 52px);
+    line-height: 1.22;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+
+  .hero .thin {
+    font-weight: 100;
+  }
+
+  .hero .name,
+  .hero strong {
+    font-weight: 500;
+  }
+
+  .hero .name {
+    color: var(--accent);
+  }
+
+  .hero-sub {
+    margin-top: clamp(28px, 3vw, 48px);
+    font-size: 20px;
+    color: var(--text-muted);
+    max-width: 60ch;
+  }
+
+  @media (max-width: 700px) {
+    .hero .thin {
+      font-weight: 200;
+    }
+  }
+
+  .project-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(48px, 4.5vw, 80px) var(--gap);
+  }
+
+  @media (max-width: 1100px) {
+    .project-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 700px) {
+    .project-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .more-projects {
+    margin-top: clamp(72px, 7vw, 120px);
+  }
+
+  .more-projects ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .more-projects a {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.7fr) minmax(0, 0.7fr);
+    gap: 8px 32px;
+    align-items: baseline;
+    padding: 22px 0;
+    border-bottom: 1px solid var(--line);
+    text-decoration: none;
+    transition: padding 0.25s ease, color 0.2s;
+  }
+
+  .more-projects a:hover {
+    padding-left: 12px;
+  }
+
+  .more-projects a:hover .more-title {
+    color: var(--accent);
+  }
+
+  .more-title {
+    font-size: 20px;
+    transition: color 0.2s;
+  }
+
+  .more-summary {
+    color: var(--text-muted);
+    font-size: 16px;
+  }
+
+  .more-meta {
+    color: var(--text-dim);
+    font-size: 14px;
+    text-align: right;
+  }
+
+  @media (max-width: 860px) {
+    .more-projects a {
+      grid-template-columns: 1fr;
+    }
+
+    .more-meta {
+      text-align: left;
+    }
+  }
+
+  .coursework {
+    margin-top: clamp(56px, 6vw, 96px);
+  }
+
+  .coursework ul {
+    margin: 0;
+    padding-left: 1.1em;
+    color: var(--text-muted);
+    columns: 2 360px;
+    column-gap: clamp(40px, 6vw, 120px);
+  }
+
+  .coursework li {
+    break-inside: avoid;
+    margin-bottom: 10px;
+  }
+
+  .coursework li::marker {
+    color: var(--accent);
+  }
+
+  /* About */
+  .about-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    gap: clamp(40px, 6vw, 120px);
+  }
+
+  .bio p {
+    font-size: clamp(20px, 1.3vw, 24px);
+    font-weight: 300;
+    line-height: 1.55;
+  }
+
+  .bio p + p {
+    margin-top: 1em;
+    color: var(--text-muted);
+  }
+
+  .goals ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .goals li {
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    align-items: baseline;
+    padding-block: 14px;
+    border-top: 1px solid var(--line);
+    color: var(--text-muted);
+  }
+
+  .goals li:last-child {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .goals .num {
+    color: var(--accent);
+    font-size: 22px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .awards {
+    margin-top: clamp(56px, 6vw, 96px);
+  }
+
+  .awards ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 16px;
+  }
+
+  .awards li {
+    padding: 24px 28px;
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  .awards h4 {
+    margin: 0;
+    font-size: clamp(20px, 1.5vw, 24px);
+    font-weight: 500;
+  }
+
+  .award-event {
+    font-weight: 300;
+    color: var(--text-muted);
+  }
+
+  .award-detail {
+    margin-top: 8px;
+    color: var(--text-muted);
+    max-width: 90ch;
+  }
+
+  .timeline-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(40px, 6vw, 120px);
+    margin-top: clamp(56px, 6vw, 96px);
+  }
+
+  .timeline-heading {
+    font-size: 24px;
+    font-weight: 400;
+    margin-bottom: 28px;
+  }
+
+  .timeline {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-left: 1px solid var(--line);
+  }
+
+  .timeline > li {
+    position: relative;
+    padding: 0 0 36px 28px;
+  }
+
+  .timeline > li:last-child {
+    padding-bottom: 0;
+  }
+
+  .timeline > li::before {
+    content: '';
+    position: absolute;
+    left: -5px;
+    top: 8px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  .period {
+    font-size: 14px;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+
+  .timeline h4 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1.35;
+  }
+
+  .org {
+    color: var(--text-muted);
+  }
+
+  .timeline ul {
+    margin: 10px 0 0;
+    padding-left: 1.1em;
+    color: var(--text-muted);
+    font-size: 16px;
+  }
+
+  @media (max-width: 860px) {
+    .about-grid,
+    .timeline-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Skills */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
+    gap: 40px var(--gap);
+  }
+
+  .skill-group h3 {
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 14px;
+  }
+
+  /* Photography teaser */
+  .photo-strip {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .photo-thumb {
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    background: var(--surface);
+  }
+
+  .photo-thumb :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+
+  .photo-thumb:hover :global(img) {
+    transform: scale(1.04);
+  }
+
+  @media (max-width: 700px) {
+    .photo-strip {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .more-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 28px;
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 18px;
+  }
+
+  .more-link :global(svg) {
+    transition: transform 0.2s;
+  }
+
+  .more-link:hover :global(svg) {
+    transform: translateX(4px);
+  }
+
+  /* Contact */
+  .contact-lead {
+    font-size: clamp(22px, 1.6vw, 28px);
+    font-weight: 300;
+  }
+
+  .contact-email {
+    display: inline-block;
+    margin-top: 16px;
+    font-size: clamp(22px, 1rem + 2.6vw, 56px);
+    font-weight: 500;
+    color: var(--accent);
+    text-decoration: none;
+    overflow-wrap: anywhere;
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 0% 2px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    transition: background-size 0.3s ease;
+  }
+
+  .contact-email:hover {
+    background-size: 100% 2px;
+  }
+
+  .contact-loc {
+    margin-top: 16px;
+  }
+</style>
