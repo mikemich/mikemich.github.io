@@ -11,6 +11,9 @@ export const profile = {
   tagline:
     'Electrical Engineering – Automotive Technology student at TU/e, working across power electronics, embedded systems and vehicle software.',
   email: 'mike.michalo@gmail.com',
+  // Shown in the CV header. Dutch recruiters look for both. Leave empty ('') to hide.
+  workAuthorization: 'EU citizen, no work permit needed',
+  availability: '', // TODO: e.g. 'Available 16–20 h/week from Feb 2027'
   // Leave a link empty ('') to hide its icon.
   links: {
     github: 'https://github.com/mikemich',
@@ -99,6 +102,17 @@ export const awards: Award[] = [
     short: '1st of 37 teams (Beginners) and 5th of 63 overall in a day-long team CTF at TU/e.',
   },
 ];
+
+export type Certification = {
+  name: string;
+  issuer: string;
+  date: string;
+  link?: string;
+};
+
+// Completed certificates only. The section stays hidden while this list is empty.
+// Planned: MathWorks Simulink Onramp, MathWorks Stateflow Onramp, Hack The Box CPTS.
+export const certifications: Certification[] = [];
 
 // Notable coursework not shown as full projects.
 export const coursework = [

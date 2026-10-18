@@ -4,13 +4,14 @@ summary: Firmware for a group-built DC-DC buck converter, with complementary PWM
 year: '2025'
 context: TU/e Challenge-Based Learning · group project
 tags: [STM32, Embedded C, Power electronics, PWM, ADC]
+role: 'Wrote all of the control firmware: PWM gate drive, sensing, protection and telemetry.'
 highlights:
   - 50 kHz complementary PWM on TIM1 with configurable dead-time
   - Input voltage through a resistor divider and current from a LEM sensor on two ADCs
   - No-load protection that shuts down the PWM and flags the fault over UART
 repo: https://github.com/mikemich/WET-CBL-9
 featured: true
-order: 4
+order: 1
 ---
 
 ## Overview

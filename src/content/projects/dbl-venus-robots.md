@@ -5,7 +5,7 @@ year: '2023'
 context: TU/e Design-Based Learning · group project
 tags: [Robotics, Embedded, OpenCV, ESP-NOW, State machines]
 featured: true
-order: 6
+order: 5
 ---
 
 ## The challenge

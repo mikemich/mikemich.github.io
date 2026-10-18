@@ -8,7 +8,8 @@ highlights:
   - T-shaped layout with 2 belts, 5 sensors and an elevator that rejects faulty items
   - C on the Arduino for real-time control, Python on the Raspberry Pi for decisions
   - Team development on GitHub with pull-request reviews
-order: 16
+featured: true
+order: 3
 ---
 
 ## Overview

@@ -9,7 +9,8 @@ highlights:
   - CPU and memory threshold alerts, configurable in a TOML file
   - Automated release builds for macOS ARM64 and Linux x86_64
 repo: https://github.com/mikemich/lightsysmon
-order: 10
+featured: false
+order: 12
 ---
 
 ## What it does

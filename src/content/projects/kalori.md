@@ -9,8 +9,8 @@ highlights:
   - Barcode scanning with Open Food Facts lookup, and contributing missing products back
   - 130 curated Greek foods searchable in Greek, Greeklish and English
   - Evidence-based daily score and personal goals (Mifflin–St Jeor) with safety floors
-featured: true
-order: 3
+featured: false
+order: 9
 ---
 
 ## Why

@@ -9,7 +9,8 @@ highlights:
   - Arduino Nano on/off control with hysteresis and three temperature sensors
   - Full product cycle including logistics analysis, marketing campaign and final pitch
 repo: https://github.com/mikemich/4WWB0-Design
-order: 15
+featured: true
+order: 6
 ---
 
 ## Overview

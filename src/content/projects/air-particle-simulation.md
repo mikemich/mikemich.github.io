@@ -9,7 +9,7 @@ highlights:
   - 'Coupled heat transfer: conduction through metal, air–metal convection and buoyancy'
   - Velocity, pressure, temperature and density views, with vortex shedding behind obstacles
 featured: true
-order: 5
+order: 8
 ---
 
 ## What it is

@@ -16,6 +16,8 @@ const projects = defineCollection({
       tags: z.array(z.string()).default([]),
       // Key results, shown as a highlight strip on the project page and as bullets on the CV.
       highlights: z.array(z.string()).default([]),
+      // What you personally did, shown as "My contribution" on the project page and CV. Matters most for team projects.
+      role: z.string().optional(),
       // Featured projects appear on the printable CV page.
       featured: z.boolean().default(false),
       // Put images in src/assets/projects and reference them relatively, e.g. ../../assets/projects/foo.jpg

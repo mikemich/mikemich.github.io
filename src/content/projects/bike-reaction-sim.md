@@ -10,7 +10,8 @@ highlights:
   - Adjustable speeds, detection distance and closing-speed threshold
   - Detection events and reactions exported as CSV for analysis
 repo: https://github.com/mikemich/Bike-reaction-time-sim
-order: 14
+featured: false
+order: 16
 ---
 
 ## What it is

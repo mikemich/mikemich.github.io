@@ -17,7 +17,7 @@ export async function getStaticPaths() {
 type Props = { project: CollectionEntry<'projects'>; next: CollectionEntry<'projects'> };
 
 const { project, next } = Astro.props;
-const { title, summary, year, context, tags, cover, link, repo, highlights } = project.data;
+const { title, summary, year, context, tags, cover, link, repo, highlights, role } = project.data;
 const meta = [context, year].filter(Boolean).join(' · ');
 const { Content } = await render(project);
 ---
@@ -70,6 +70,15 @@ const { Content } = await render(project);
             <li>{h}</li>
           ))}
         </ul>
+      )
+    }
+
+    {
+      role && (
+        <div class="role">
+          <span class="eyebrow">My contribution</span>
+          <p>{role}</p>
+        </div>
       )
     }
 
@@ -177,6 +186,19 @@ const { Content } = await render(project);
     font-size: 17px;
     line-height: 1.45;
     border-top: 2px solid var(--accent);
+  }
+
+  .role {
+    margin-top: clamp(40px, 4vw, 64px);
+    max-width: 72ch;
+    padding-left: 20px;
+    border-left: 2px solid var(--accent);
+  }
+
+  .role p {
+    margin-top: 8px;
+    font-size: clamp(18px, 1.2vw, 22px);
+    line-height: 1.5;
   }
 
   .prose {

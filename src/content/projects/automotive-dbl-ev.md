@@ -9,8 +9,8 @@ highlights:
   - Coast-down tests on an 11.95 kg car to find the rolling-resistance coefficient
   - Measured c_r ≈ 0.0252, used for the tank-to-wheel energy analysis
 repo: https://github.com/mikemich/Speed-measurement-system-and-led-control
-featured: false
-order: 8
+featured: true
+order: 7
 ---
 
 ## The challenge

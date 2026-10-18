@@ -9,6 +9,7 @@ highlights:
   - Falls back to bundled data snapshots when the API is down
   - Interactive Chart.js timeline of cases, deaths and recoveries
 repo: https://github.com/mikemich/covidgreece.com
+featured: false
 order: 17
 ---
 

@@ -8,7 +8,8 @@ highlights:
   - Pure, side-effect-free rules engine with year-versioned parameters
   - Every rule cites its official source; official Huurcommissie cases act as test oracles
   - Money handled as integer cents, all text in Dutch and English, no tracking
-order: 9
+featured: false
+order: 11
 ---
 
 ## The problem

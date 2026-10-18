@@ -4,7 +4,8 @@ summary: A safe toolkit for running custom software on the reMarkable Paper Pro 
 year: '2026'
 context: Personal project
 tags: [Embedded Linux, SSH, Shell, Reverse engineering]
-order: 13
+featured: false
+order: 15
 ---
 
 ## What it is

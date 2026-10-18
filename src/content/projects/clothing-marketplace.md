@@ -4,6 +4,7 @@ summary: A personal website where users can upload and browse clothing listings.
 year: '' # TODO: add the year (between 2018 and 2022)
 context: Freelance / personal project
 tags: [Full-stack, Web, Database]
+featured: false
 order: 18
 # cover: ../../assets/projects/clothing-marketplace.jpg
 ---

@@ -4,7 +4,8 @@ summary: A plugin-based terminal shell in Go that wraps services like Hacker New
 year: '2026'
 context: Personal project
 tags: [Go, Bubble Tea, TUI, Plugins]
-order: 12
+featured: false
+order: 14
 ---
 
 ## What it is

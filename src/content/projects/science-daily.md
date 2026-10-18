@@ -9,7 +9,8 @@ highlights:
   - Optional AI summaries via Claude, OpenAI or on-device Apple Intelligence
   - Reads Abstract, Introduction and Conclusion straight from the PDF on-device
 repo: https://github.com/mikemich/scienced
-order: 11
+featured: false
+order: 13
 ---
 
 ## What it does

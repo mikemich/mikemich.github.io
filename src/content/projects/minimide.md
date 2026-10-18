@@ -12,7 +12,7 @@ highlights:
   - Release CI that builds installers for macOS, Windows and Linux
 repo: https://github.com/mikemich/minimide
 featured: false
-order: 7
+order: 10
 ---
 
 ## The idea

@@ -3,7 +3,7 @@ import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
-import { profile, summary, experience, education, coursework, awards, skills, languages, interests } from '../data/cv';
+import { profile, summary, experience, education, coursework, awards, certifications, skills, languages, interests } from '../data/cv';
 import { profilePhoto } from '../data/profilePhoto';
 
 // One-page mode shows the first ONE_PAGE_PROJECTS projects (ONE_PAGE_HIGHLIGHTS bullets each),
@@ -47,6 +47,8 @@ const linkLabel = (url: string) => url.replace(/^https?:\/\/(www\.)?/, '').repla
           {profile.links.github && <li><a href={profile.links.github}>{linkLabel(profile.links.github)}</a></li>}
           {profile.links.linkedin && <li><a href={profile.links.linkedin}>{linkLabel(profile.links.linkedin)}</a></li>}
           {site && <li><a href={Astro.site}>{site}</a></li>}
+          {profile.workAuthorization && <li>{profile.workAuthorization}</li>}
+          {profile.availability && <li>{profile.availability}</li>}
         </ul>
       </header>
 
@@ -109,8 +111,9 @@ const linkLabel = (url: string) => url.replace(/^https?:\/\/(www\.)?/, '').repla
                   </div>
                   {p.data.context && <p class="org">{p.data.context}</p>}
                   <ul>
+                    {p.data.role && <li class="role-line">{p.data.role}</li>}
                     {(p.data.highlights.length > 0 ? p.data.highlights.slice(0, 3) : [p.data.summary]).map((h, j) => (
-                      <li class:list={{ extra: j >= ONE_PAGE_HIGHLIGHTS }}>{h}</li>
+                      <li class:list={{ extra: j >= (p.data.role ? ONE_PAGE_HIGHLIGHTS - 1 : ONE_PAGE_HIGHLIGHTS) }}>{h}</li>
                     ))}
                   </ul>
                 </div>
@@ -153,6 +156,21 @@ const linkLabel = (url: string) => url.replace(/^https?:\/\/(www\.)?/, '').repla
               ))
             }
           </section>
+
+          {
+            certifications.length > 0 && (
+              <section>
+                <h2>Certifications</h2>
+                <ul class="plain">
+                  {certifications.map((c) => (
+                    <li>
+                      {c.link ? <a href={c.link}>{c.name}</a> : c.name} <span class="muted-print">· {c.issuer}, {c.date}</span>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )
+          }
 
           <section class="extra">
             <h2>Coursework</h2>
@@ -414,6 +432,10 @@ const linkLabel = (url: string) => url.replace(/^https?:\/\/(www\.)?/, '').repla
 
   .award-line {
     margin-top: 2px;
+  }
+
+  .role-line {
+    font-weight: 600;
   }
 
   .stack {

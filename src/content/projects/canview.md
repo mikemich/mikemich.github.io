@@ -11,7 +11,7 @@ highlights:
   - Per-ID message rates, a signal view and a bus-load sparkline in the terminal
 repo: https://github.com/mikemich/canview
 featured: true
-order: 1
+order: 2
 ---
 
 ## Why

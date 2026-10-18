@@ -11,7 +11,7 @@ highlights:
   - 11 research analytics on scanner behaviour, from operator rhythm to zero-day recon early warning
   - Ships as Docker images, a single binary, and a zero-egress Raspberry Pi sensor
 featured: true
-order: 2
+order: 4
 ---
 
 ## What it is
