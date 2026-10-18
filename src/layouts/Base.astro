@@ -18,6 +18,21 @@ const {
 } = Astro.props;
 
 const pageTitle = title ? `${title} · ${profile.name}` : `${profile.name} · ${profile.role}`;
+const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : undefined;
+
+// Structured data so search engines can show name, role and profiles.
+const person = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: profile.fullName,
+  alternateName: profile.name,
+  jobTitle: profile.headline,
+  email: `mailto:${profile.email}`,
+  url: Astro.site?.href,
+  address: { '@type': 'PostalAddress', addressLocality: 'Eindhoven', addressCountry: 'NL' },
+  alumniOf: { '@type': 'CollegeOrUniversity', name: 'Eindhoven University of Technology' },
+  sameAs: Object.values(profile.links).filter(Boolean),
+};
 ---
 
 <!doctype html>
@@ -31,7 +46,11 @@ const pageTitle = title ? `${title} · ${profile.name}` : `${profile.name} · ${
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
+    {canonical && <link rel="canonical" href={canonical} />}
+    {canonical && <meta property="og:url" content={canonical} />}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="sitemap" href="/sitemap.xml" />
+    <script type="application/ld+json" set:html={JSON.stringify(person)} />
   </head>
   <body>
     <!-- Background glows from the Figma file (green top-right, blue bottom-left). -->
