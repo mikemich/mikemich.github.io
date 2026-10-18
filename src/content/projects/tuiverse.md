@@ -5,7 +5,7 @@ year: '2026'
 context: Personal project
 tags: [Go, Bubble Tea, TUI, Plugins]
 featured: false
-order: 14
+order: 18
 ---
 
 ## What it is

@@ -128,7 +128,7 @@ export const skills: { group: string; items: string[] }[] = [
   },
   {
     group: 'Simulation & analysis',
-    items: ['MATLAB', 'Simulink', 'Speedgoat', 'CFD', 'Signal processing'],
+    items: ['MATLAB', 'Simulink', 'Speedgoat', 'CFD', 'Signal processing / DSP'],
   },
   {
     group: 'Embedded & automotive',
@@ -140,7 +140,7 @@ export const skills: { group: string; items: string[] }[] = [
   },
   {
     group: 'Software & web',
-    items: ['React', 'React Native (Expo)', 'SwiftUI', 'Electron', 'Flask', 'Docker', 'Git & GitHub Actions', 'Nginx / Apache'],
+    items: ['React', 'React Native (Expo)', 'SwiftUI', 'Electron', 'Flask', 'PyTorch', 'WebAssembly', 'Docker', 'Git & GitHub Actions', 'Nginx / Apache'],
   },
   {
     group: 'Design & tools',

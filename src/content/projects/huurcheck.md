@@ -9,7 +9,7 @@ highlights:
   - Every rule cites its official source; official Huurcommissie cases act as test oracles
   - Money handled as integer cents, all text in Dutch and English, no tracking
 featured: false
-order: 11
+order: 15
 ---
 
 ## The problem

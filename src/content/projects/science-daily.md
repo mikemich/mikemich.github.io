@@ -10,7 +10,7 @@ highlights:
   - Reads Abstract, Introduction and Conclusion straight from the PDF on-device
 repo: https://github.com/mikemich/scienced
 featured: false
-order: 13
+order: 17
 ---
 
 ## What it does

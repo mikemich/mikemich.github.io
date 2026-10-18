@@ -11,7 +11,7 @@ highlights:
   - Detection events and reactions exported as CSV for analysis
 repo: https://github.com/mikemich/Bike-reaction-time-sim
 featured: false
-order: 16
+order: 20
 ---
 
 ## What it is

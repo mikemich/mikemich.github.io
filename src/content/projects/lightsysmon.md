@@ -10,7 +10,7 @@ highlights:
   - Automated release builds for macOS ARM64 and Linux x86_64
 repo: https://github.com/mikemich/lightsysmon
 featured: false
-order: 12
+order: 16
 ---
 
 ## What it does

@@ -10,7 +10,7 @@ highlights:
   - 130 curated Greek foods searchable in Greek, Greeklish and English
   - Evidence-based daily score and personal goals (Mifflin–St Jeor) with safety floors
 featured: false
-order: 9
+order: 13
 ---
 
 ## Why

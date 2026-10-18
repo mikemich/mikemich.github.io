@@ -10,7 +10,7 @@ highlights:
   - Interactive Chart.js timeline of cases, deaths and recoveries
 repo: https://github.com/mikemich/covidgreece.com
 featured: false
-order: 17
+order: 21
 ---
 
 ## Overview
