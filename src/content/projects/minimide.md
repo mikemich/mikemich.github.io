@@ -37,6 +37,15 @@ codebase small enough to read end to end.
 - **Git:** branch switcher, file status, and gutter change markers from its own Myers diff implementation
 - File tree, fuzzy finder, command palette, project-wide regex find and replace, Markdown preview and three themes
 
+## Published plugins
+
+I also wrote and published three small third-party plugins against the public plugin API. Each
+runs sandboxed and asks for no permissions:
+
+- **[Insert](https://github.com/mikemich/minimide-insert):** inserts a UUID, the date or time, a timestamp, a random password or lorem ipsum, from a picker that previews each one
+- **[Word Goal](https://github.com/mikemich/minimide-word-goal):** shows the word count of the current file against a goal in the status bar
+- **[Pomodoro](https://github.com/mikemich/minimide-pomodoro):** a 25/5-minute focus timer in the status bar, with configurable lengths
+
 ## Tech
 
 Electron, CodeMirror 6 and Lezer, xterm.js, esbuild and electron-builder, with GitHub Actions

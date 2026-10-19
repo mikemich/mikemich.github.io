@@ -24,6 +24,7 @@ PNG, JPG and SVG export. It can also import HTML pages and Figma files as editab
 - **Engine (Rust):** the document model, commands with undo and redo, layout, components, rendering, code generation and the tool layer used by the AI. It is compiled to WebAssembly for the editor.
 - **Bridge (Rust):** a small local server that links the same engine natively. It relays between the editor and Claude Code, serves an MCP endpoint, and can edit a design file headlessly when no editor is open.
 - **Editor (React + TypeScript):** canvas, layers and properties panels, and a chat panel.
+- **Multiplayer (Rust):** a rooms crate shared by the bridge, for local-network sessions, and by a small internet relay, for online sharing, with live cursors and selections.
 
 ## Working with Claude
 
@@ -34,7 +35,8 @@ workspace.
 
 ## Tech
 
-About 13,000 lines of Rust in the engine and 1,600 in the bridge, plus about 9,700 lines of
-TypeScript and CSS in the editor. `cargo test` runs 70 engine and bridge tests, and a
-browser end-to-end script covers drawing, components, export and the AI tools. Tagged releases
+About 15,500 lines of Rust in the engine and 2,200 in the bridge, plus about 15,000 lines of
+TypeScript and CSS in the editor. `cargo test` runs 113 tests across the engine, bridge and
+multiplayer crates, and browser end-to-end scripts cover drawing, components, export, the AI tools
+and multiplayer. Tagged releases
 build a single binary with the editor embedded for macOS, Linux and Windows.

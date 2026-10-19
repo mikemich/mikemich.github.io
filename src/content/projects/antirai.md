@@ -1,40 +1,59 @@
 ---
-title: antirai – Mirai Botnet Detector
-summary: A Python network monitor and scanner that detects Mirai-infected IoT devices on your own network from their traffic, and alerts you.
+title: antirai – Network Infection Detector
+summary: A Python network monitor that captures your network's packets and tells you which devices are infected, starting from Mirai botnet detection, with a verdict and evidence for every device.
 year: '2026'
 context: Personal project · private repository
 tags: [Python, Networking, Security, IoT, Packet analysis]
 highlights:
-  - Eight passive detectors, from Mirai's SYN fingerprint to its C2 protocol and floods
+  - Detectors for Mirai and its variants, worms, beaconing, cryptojacking, and ARP, DHCP and DNS spoofing
+  - Per-device verdict (likely infected, suspicious, exposed, clean) with reasons and pcap evidence
   - Own byte-level packet decoder, cross-checked against scapy and fuzzed with 100k mutated frames
-  - Terminal UI, headless monitor and pcap analysis, with 86 tests in CI on Linux and macOS
 featured: false
 order: 12
 ---
 
 ## What it is
 
-Mirai infects IoT devices with default telnet passwords and uses them for scanning and
-floods. antirai watches network traffic for that behaviour and flags the infected device by IP
-and MAC. It can monitor live traffic, analyse pcap files, or actively scan a network you own.
+antirai started as a detector for Mirai, the botnet that takes over IoT devices through default
+telnet passwords. It now also catches other infections and attacks on the local network. Every
+device gets a verdict (**likely infected**, **suspicious**, **exposed** or **clean**) with the
+reasons and what to do, and when something serious happens the device's packets are saved to a
+pcap file as evidence.
+
+It is a defender's tool by design: it listens. It never tries passwords, never exploits anything
+and never blocks traffic.
 
 ## What it detects
 
-- **SYN fingerprint:** Mirai's scanner sets the TCP sequence number to the target IP, which real TCP stacks never do.
-- **Propagation scans** on telnet and IoT ports, the **bot-to-C2 protocol** and connections to the credential **report server**.
-- **Cleartext infection sessions:** BusyBox probes, loader downloads and Mirai's default-password list.
-- **Attacks:** SYN, ACK, UDP, GRE and ICMP floods, and random-subdomain DNS floods.
-- **Active scan:** open telnet, ADB, TR-069 and similar ports, and management ports that disappeared while the host stayed up, since Mirai kills telnetd and sshd after infection. The scanner never tries to log in and refuses networks outside the configured LAN ranges.
+- **Mirai and its variants:** the scanner's SYN fingerprint (the TCP sequence number equals the target IP, which real TCP stacks never do), propagation scans on telnet and IoT ports, the bot-to-C2 protocol, the credential report server, cleartext infection sessions, and the floods a bot runs during an attack.
+- **Attacks on the network:** ARP spoofing (critical when the router's IP is claimed), rogue DHCP servers and forged DNS answers, plus new devices with their maker.
+- **Any infected device:** worm-style port scans, beaconing to an outside server at near-constant intervals, cryptomining pool traffic, connections to abuse.ch and Spamhaus blocklists, and logins without encryption (reported without ever recording passwords).
+- **Weak spots, on request:** an optional scan of your own network for open doors (telnet, ADB, TR-069), risky services, outdated software from service banners, factory-default certificates, UPnP port mapping, and management services that vanished while the device stayed up, since Mirai kills telnetd and sshd after infection.
 
 ## Alerts
 
-Alerts go to the console and a JSONL log, and above a set severity to macOS notifications, a
+Alerts go to the terminal UI, a JSONL log and, above a set severity, to desktop notifications, a
 Slack or Discord webhook, or email. Alert text is sanitised, since DNS names and payloads are
 attacker-controlled.
 
+## dfndr: a dashboard on top
+
+I also built dfndr, a local dashboard that runs antirai as its detection engine and adds checks
+of its own on a schedule:
+
+- **This Mac:** firewall, FileVault, SIP, Gatekeeper, risky listening services and unsigned or new startup items
+- **Live connections:** every open connection matched against abuse.ch and Spamhaus blocklists
+- **Wi-Fi, router and DNS:** weak Wi-Fi encryption, DNS tampering and hijacking, and ARP clones of the router
+- **Exposure and updates:** the public IP in Shodan InternetDB, UPnP port forwards and pending security updates
+
+Findings feed a single 0–100 score and a "fix these first" list, and the web UI shows a network map
+coloured by risk. Nothing probes a network until you mark it trusted, recognised by the router's MAC
+address. The dashboard listens only on 127.0.0.1 and needs a random token. dfndr is about 3,500
+lines of Python, with 52 tests.
+
 ## Tech
 
-Python with scapy and Textual. Frames are decoded straight from bytes, about 14 times faster
-than through scapy, which the README puts at 100–150k packets per second on a laptop core.
-About 2,600 lines plus a 950-line test suite that checks a synthetic infection pcap triggers
-every detector and a busy benign pcap stays alert-free.
+Python with scapy and Textual. Frames are decoded straight from bytes, about 14 times faster than
+through scapy. The decoder is cross-checked against scapy on every sample packet type (VLAN,
+loopback, SLL, fragments, pcapng) and fuzzed with 100k mutated frames. About 4,900 lines of
+Python with a 1,900-line test suite of 188 tests.
